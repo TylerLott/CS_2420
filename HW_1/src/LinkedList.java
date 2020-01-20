@@ -32,6 +32,8 @@ public class LinkedList {
         if (this.getLength() > 1) {
             Node newHead = head.getNext();
             head = newHead;
+        } else {
+            head = null;
         }
         return oldHead;
     }
@@ -48,6 +50,10 @@ public class LinkedList {
 
     public Node getHead(){
         return head;
+    }
+
+    public boolean isEmpty(){
+        return head == null;
     }
 }
 
