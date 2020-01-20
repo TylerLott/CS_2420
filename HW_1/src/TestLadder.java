@@ -4,7 +4,7 @@ public class TestLadder {
 
         int RANDOMCT = 7;
         LadderGame g = new LadderGame("dictionary.txt");
-        g.listWords(10, 6);  //Lists the first ten words in the dictionary of length 6 as a test.
+        // g.listWords(10, 6);  //Lists the first ten words in the dictionary of length 6 as a test.
         //g.play("oops", "tots");
         //g.play("ride", "ands");
         //g.play("happily", "angrily");
