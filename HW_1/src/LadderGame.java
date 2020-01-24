@@ -57,6 +57,7 @@ public class LadderGame {
         boolean done = false;
         WordInfo answer = null;
         int enqueues = 0;
+        int numOfWords = 0;
         boolean exists = false;
 
         // actual logic and iteration of the program
@@ -67,6 +68,9 @@ public class LadderGame {
 
             // iterate through the words in the list
             for (Object word : list) {
+
+                // iterate total number of words read from the dictionary
+                numOfWords++;
 
                 // check that the word is one letter off the word info object that is being checked
                 // also check that the word is not part of already used words
@@ -105,10 +109,10 @@ public class LadderGame {
         if (exists) {
             String output = a + "->" + b + "  " + answer.moves + " Moves ["
                     + answer.history + " " + answer.word
-                    + "] total enqueues " + enqueues;
+                    + "] \ntotal enqueues " + enqueues + "  \nTotal number of words read: " + numOfWords + "\n";
             System.out.println(output);
         } else {
-            System.out.println("No ladder connecting " + a + " to " + b + " exists.");
+            System.out.println("No ladder connecting " + a + " to " + b + " exists. \nTotal number of words read: " + numOfWords + "\n");
         }
     }
 
