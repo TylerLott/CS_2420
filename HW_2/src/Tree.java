@@ -101,7 +101,7 @@ public class Tree<E extends Comparable<? super E>> {
             }
         }
         if (node.left != null){
-            if (node.parent != null && !(node.right != null && node.left != null)) {
+            if (node.parent != null && node.right == null) {
                 System.out.println(node.element.toString() + "[" + node.parent.element.toString() + "]");
             }
             stringTraversal(node.left);
@@ -124,7 +124,22 @@ public class Tree<E extends Comparable<? super E>> {
      * reverse left and right children recursively
      */
     public void flip() {
-         //flip(root);
+         flipTraversal(root);
+    }
+
+    public void flipTraversal(BinaryNode<E> node){
+        if (node.right != null){
+            flipTraversal(node.right);
+            if (node.left != null){
+                flipTraversal(node.left);
+            }
+            BinaryNode<E> temp = node.right;
+            node.right = node.left;
+            node.left = temp;
+        }
+
+
+        // flip
     }
 
     /**
@@ -393,13 +408,14 @@ public class Tree<E extends Comparable<? super E>> {
         Tree<Integer> treeA = new Tree<Integer>(v4, "TreeA:", 2);
         Tree<Integer> treeB = new Tree<Integer>(v5, "TreeB", 3);
         Tree<Integer> treeC = new Tree<Integer>("TreeC");
-        System.out.println(tree1.toString());
+//        System.out.println(tree1.toString());
 //        System.out.println(tree1.toString2());
 //
-//        System.out.println(treeA.toString());
-//
-//        treeA.flip();
+        System.out.println(treeA.toString());
+
+        treeA.flip();
 //        System.out.println("Now flipped" + treeA.toString());
+        System.out.println(treeA.toString());
 //
 //        System.out.println(tree2.toString());
 //        tree2.contains(val);  //Sets the current node inside the tree6 class.
