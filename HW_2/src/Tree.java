@@ -84,6 +84,7 @@ public class Tree<E extends Comparable<? super E>> {
         if (root == null)
             return (treeName + " Empty tree\n");
         else
+
             return " ";
     }
 
