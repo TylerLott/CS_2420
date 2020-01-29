@@ -193,8 +193,28 @@ public class Tree<E extends Comparable<? super E>> {
      * Print all paths from root to leaves
      */
     public void printAllPaths() {
+        ArrayList<Integer> pathList = new ArrayList<>();
+        printAllPaths(root, pathList, 0);
+    }
+
+    private void printAllPaths(BinaryNode<E> node, ArrayList<Integer> path, int height){
+        if (node == null){
+            return;
+        }
+        while (path.size() > height){
+            path.remove(path.size() - 1);
+        }
+        path.add((Integer) node.element);
+        height++;
+        if (node.left == null && node.right == null){
+            System.out.println(path);
+        } else {
+            printAllPaths(node.left, path, height);
+            printAllPaths(node.right, path, height);
+        }
 
     }
+
 
     /**
      * Print contents of levels in zig zag order starting at maxLevel
