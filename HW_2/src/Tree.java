@@ -82,15 +82,10 @@ public class Tree<E extends Comparable<? super E>> {
     public String toString() {
         if (root == null)
             return (treeName + " Empty tree\n");
-<<<<<<< HEAD:HW_2/src/Tree.java
-        else
-
-=======
         else {
             stringTraversal(root);
         }
->>>>>>> 4667899d08cad73e864cc18f6766089a3cb9b037:HW_2/Tree.java
-            return " ";
+        return " ";
     }
 
     public void stringTraversal(BinaryNode<E> node){
