@@ -212,7 +212,6 @@ public class Tree<E extends Comparable<? super E>> {
             printAllPaths(node.left, path, height);
             printAllPaths(node.right, path, height);
         }
-
     }
 
 
@@ -221,7 +220,17 @@ public class Tree<E extends Comparable<? super E>> {
      * @param maxLevel
      */
     public void byLevelZigZag(int maxLevel) {
+        System.out.println(byLevelZigZag(root, maxLevel, 0));
+    }
 
+    private String byLevelZigZag(BinaryNode<E> node, int max, int cur){
+        if (node == null) {
+            return "";
+        }
+        if (max == cur){
+            return node.element.toString() + " ";
+        }
+        return byLevelZigZag(node.right, max, cur + 1) + byLevelZigZag(node.left, max, cur + 1);
     }
 
     /**
