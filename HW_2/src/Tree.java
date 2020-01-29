@@ -148,10 +148,27 @@ public class Tree<E extends Comparable<? super E>> {
      */
     public String successor() {
         if (curr == null) curr = root;
-        //curr = successor(curr);
+        curr = successor(curr);
         if (curr == null) return "null";
         else return curr.toString();
     }
+
+    private BinaryNode<E> successor(BinaryNode<E> node){
+        if (node.right != null) {
+            BinaryNode<E> current = node;
+            while (node.left != null) {
+                current = current.left;
+            }
+            return current;
+        }
+        BinaryNode<E> parent = node.parent;
+        while (parent != null && node == parent.right){
+            node = parent;
+            parent = parent.parent;
+        }
+        return parent;
+    }
+
 
     /**
      * Counts number of nodes in specifed level
