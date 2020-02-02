@@ -89,23 +89,23 @@ public class Tree<E extends Comparable<? super E>> {
     }
 
     public void stringTraversal(BinaryNode<E> node){
-        if (node.left == null && node.right == null){
-            System.out.println(node.element.toString() + "[" + node.parent.element.toString() + "]");
-        }
-        if (node.right != null) {
-            stringTraversal(node.right);
-            if (node.parent != null) {
-                System.out.println(node.element.toString() + "[" + node.parent.element.toString() + "]");
-            } else {
-                System.out.println(node.element.toString() + "[no parent]");
-            }
-        }
-        if (node.left != null){
-            if (node.parent != null && node.right == null) {
+            if (node.left == null && node.right == null) {
                 System.out.println(node.element.toString() + "[" + node.parent.element.toString() + "]");
             }
-            stringTraversal(node.left);
-        }
+            if (node.right != null) {
+                stringTraversal(node.right);
+                if (node.parent != null) {
+                    System.out.println(node.element.toString() + "[" + node.parent.element.toString() + "]");
+                } else {
+                    System.out.println(node.element.toString() + "[no parent]");
+                }
+            }
+            if (node.left != null) {
+                if (node.parent != null && node.right == null) {
+                    System.out.println(node.element.toString() + "[" + node.parent.element.toString() + "]");
+                }
+                stringTraversal(node.left);
+            }
 
 
     }
@@ -138,8 +138,6 @@ public class Tree<E extends Comparable<? super E>> {
             node.left = temp;
         }
 
-
-        // flip
     }
 
     /**
@@ -239,7 +237,11 @@ public class Tree<E extends Comparable<? super E>> {
      */
     public Integer countBST() {
         if (root == null) return 0;
-        return -1;
+        return countBST(root);
+    }
+
+    private Integer countBST(BinaryNode<E> node){
+        return 0;
     }
 
     /**
@@ -247,7 +249,6 @@ public class Tree<E extends Comparable<? super E>> {
      * @param x the item to insert.
      */
     public void bstInsert(E x) {
-
         root = bstInsert(x, root, null);
     }
 
@@ -265,7 +266,24 @@ public class Tree<E extends Comparable<? super E>> {
      * Remove all paths from tree that sum to less than given value
      * @param sum: minimum path sum allowed in final tree
      */
+    // complexity O(n)
     public void pruneK(Integer sum) {
+        pruneRecursive((BinaryNode<Integer>) root, sum);
+    }
+    private BinaryNode<Integer> pruneRecursive(BinaryNode<Integer> node, int sum){
+        if (node == null){
+            return null;
+        }
+
+        node.left = pruneRecursive(node.left, sum - node.element);
+        node.right = pruneRecursive(node.right, sum - node.element);
+
+        if (node.left == null && node.right == null){
+            if (sum > node.element){
+                node = null;
+            }
+        }
+        return node;
     }
 
     /**
@@ -274,8 +292,36 @@ public class Tree<E extends Comparable<? super E>> {
      * @param preOrder List of tree nodes in preorder
      */
     public void buildTreeTraversals(E[] inOrder, E[] preOrder) {
-        root = null;
+        int i = 0;
+        buildTreeTraversals(inOrder, preOrder, 0, inOrder.length - 1, 0);
     }
+    private BinaryNode<E> buildTreeTraversals(E[] in, E[] pre, int a, int b, int index){
+        if (a > b){
+            return null;
+        }
+        BinaryNode<E> node = new BinaryNode<>(pre[index++]);
+
+        if (a == b){
+            return node;
+        }
+
+        int inOrder = find(in, node.element);
+
+        node.left = buildTreeTraversals(in, pre, a,  inOrder - 1, index);
+        node.right = buildTreeTraversals(in, pre, inOrder + 1, b, index);
+
+        return node;
+    }
+
+    private int find(E[] a, E thing){
+        for (int i=0;i<a.length;i++){
+            if (a[i].equals(thing)){
+                return i;
+            }
+        }
+        return -1;
+    }
+
 
     /**
      * Find the least common ancestor of two nodes
@@ -297,17 +343,72 @@ public class Tree<E extends Comparable<? super E>> {
     /**
      * Balance the tree
      */
+    // complexity O(n)
     public void balanceTree() {
-        //root = balanceTree(root);
+        ArrayList<BinaryNode<E>> inOrderTrav = new ArrayList<>();
+        inOrderTraversal(root, inOrderTrav);
+        root = null;
+        System.out.println(inOrderTrav);
+        balanceTree(inOrderTrav, 0, inOrderTrav.size() - 1, null);
     }
+    private void inOrderTraversal(BinaryNode<E> node, ArrayList<BinaryNode<E>> arr){
+        if (node == null){
+            return;
+        }
+        inOrderTraversal(node.left, arr);
+        arr.add(node);
+        inOrderTraversal(node.right, arr);
+    }
+
+    private BinaryNode<E> balanceTree(ArrayList<BinaryNode<E>> trav, int a, int b, BinaryNode<E> parent){
+        if (a > b){
+            return null;
+        }
+        int middle = (a+b)/2;
+        BinaryNode<E> node = new BinaryNode<E>(trav.get(middle).element, null, null, parent);
+
+        if (root == null){
+            root = node;
+            root.parent = null;
+        }
+
+        node.left = balanceTree(trav, a, middle - 1, node);
+        node.right = balanceTree(trav, middle + 1, b, node);
+
+        return node;
+    }
+
 
     /**
      * In a BST, keep only nodes between range
      * @param a lowest value
      * @param b highest value
      */
-    public void keepRange(E a, E b) {
+    // complexity O(n)
+    public void keepRange(int a, int b) {
+        keepRange((BinaryNode<Integer>) root, a, b);
      }
+
+     private BinaryNode<Integer> keepRange(BinaryNode<Integer> node, int min, int max){
+        if (node == null){
+            return null;
+        }
+
+        node.right = keepRange(node.right, min, max);
+        node.left = keepRange(node.left, min, max);
+
+        if (node.element < min){
+            BinaryNode<Integer> childRight = node.right;
+            node = null;
+            return childRight;
+        }
+         if (node.element > max){
+             BinaryNode<Integer> childLeft = node.left;
+             node = null;
+             return childLeft;
+         }
+         return node;
+    }
 
     //PRIVATE
 
@@ -464,68 +565,69 @@ public class Tree<E extends Comparable<? super E>> {
         Tree<Integer> treeA = new Tree<Integer>(v4, "TreeA:", 2);
         Tree<Integer> treeB = new Tree<Integer>(v5, "TreeB", 3);
         Tree<Integer> treeC = new Tree<Integer>("TreeC");
-        System.out.println(tree1.toString());
-        System.out.println(tree1.toString2());
-
-        System.out.println(treeA.toString());
-
-        treeA.flip();
-        System.out.println("Now flipped" + treeA.toString());
-        System.out.println(treeA.toString());
-
-        System.out.println(tree2.toString());
-        tree2.contains(val);  //Sets the current node inside the tree6 class.
-        int succCount = 5;  // how many successors do you want to see?
-        System.out.println("In Tree2, starting at " + val + ENDLINE);
-        for (int i = 0; i < succCount; i++) {
-            System.out.println("The next successor is " + tree2.successor());
-        }
-
-        System.out.println(tree1.toString());
-        for (int mylevel = 0; mylevel < SIZE; mylevel += 2) {
-            System.out.println("Number nodes at level " + mylevel + " is " + tree1.nodesInLevel(mylevel));
-        }
-        System.out.println("All paths from tree1");
-        tree1.printAllPaths();
-
-        System.out.print("Tree1 byLevelZigZag: ");
-        tree1.byLevelZigZag(5);
-        System.out.print("Tree2 byLevelZigZag (3): ");
-        tree2.byLevelZigZag(3);
-        treeA.flip();
-        System.out.println(treeA.toString());
-        System.out.println("treeA Contains BST: " + treeA.countBST());
-
-        System.out.println(treeB.toString());
-        System.out.println("treeB Contains BST: " + treeB.countBST());
-
-        treeB.pruneK(60);
-        treeB.changeName("treeB after pruning 60");
-        System.out.println(treeB.toString());
-        treeA.pruneK(220);
-        treeA.changeName("treeA after pruning 220");
-        System.out.println(treeA.toString());
-
+//        System.out.println(tree1.toString());
+//        System.out.println(tree1.toString2());
+//
+//        System.out.println(treeA.toString());
+//
+//        treeA.flip();
+//        System.out.println("Now flipped" + treeA.toString());
+//
+//        System.out.println(tree2.toString());
+//        tree2.contains(val);  //Sets the current node inside the tree6 class.
+//        int succCount = 5;  // how many successors do you want to see?
+//        System.out.println("In Tree2, starting at " + val + ENDLINE);
+//        for (int i = 0; i < succCount; i++) {
+//            System.out.println("The next successor is " + tree2.successor());
+//        }
+//
+//        System.out.println(tree1.toString());
+//        for (int mylevel = 0; mylevel < SIZE; mylevel += 2) {
+//            System.out.println("Number nodes at level " + mylevel + " is " + tree1.nodesInLevel(mylevel));
+//        }
+//        System.out.println("All paths from tree1");
+//        tree1.printAllPaths();
+//
+//        System.out.print("Tree1 byLevelZigZag (5): ");
+//        tree1.byLevelZigZag(5);
+//        System.out.print("Tree2 byLevelZigZag (3): ");
+//        tree2.byLevelZigZag(3);
+//        treeA.flip();
+//        System.out.println(treeA.toString());
+//        System.out.println("treeA Contains BST: " + treeA.countBST());
+//
+//        System.out.println(treeB.toString());
+//        System.out.println("treeB Contains BST: " + treeB.countBST());
+//
+//        treeB.pruneK(60);
+//        treeB.changeName("treeB after pruning 60");
+//        System.out.println(treeB.toString());
+//        treeA.pruneK(220);
+//        treeA.changeName("treeA after pruning 220");
+//        System.out.println(treeA.toString());
+//
         treeC.buildTreeTraversals(inorder, preorder);
         treeC.changeName("Tree C built from inorder and preorder traversals");
         System.out.println(treeC.toString());
-
-        System.out.println(tree1.toString());
-        System.out.println("tree1 Least Common Ancestor of (56,61) " + tree1.lca(56, 61) + ENDLINE);
-
-        System.out.println("tree1 Least Common Ancestor of (6,25) " + tree1.lca(6, 25) + ENDLINE);
-        System.out.println(tree3.toString());
-        tree3.balanceTree();
-        tree3.changeName("tree3 after balancing");
-        System.out.println(tree3.toString());
-
-        System.out.println(tree1.toString());
-        tree1.keepRange(10, 50);
-        tree1.changeName("tree1 after keeping only nodes between 10 and 50");
-        System.out.println(tree1.toString());
-        tree3.keepRange(3, 85);
-        tree3.changeName("tree3 after keeping only nodes between 3  and 85");
-        System.out.println(tree3.toString());
+//
+//        System.out.println(tree1.toString());
+//        System.out.println("tree1 Least Common Ancestor of (56,61) " + tree1.lca(56, 61) + ENDLINE);
+//
+//        System.out.println("tree1 Least Common Ancestor of (6,25) " + tree1.lca(6, 25) + ENDLINE);
+//        System.out.println(tree3.toString());
+//        tree3.balanceTree();
+//        tree3.changeName("tree3 after balancing");
+//        System.out.println(tree3.toString());
+//
+//        System.out.println(tree1.toString());
+//        tree1.keepRange(10, 50);
+//        tree1.changeName("tree1 after keeping only nodes between 10 and 50");
+//        System.out.println("tree1 after keeping only nodes between 10 and 50");
+//        System.out.println(tree1.toString());
+//        tree3.keepRange(3, 85);
+//        tree3.changeName("tree3 after keeping only nodes between 3  and 85");
+//        System.out.println("tree3 after keeping only nodes between 3  and 85");
+//        System.out.println(tree3.toString());
 
 
     }
