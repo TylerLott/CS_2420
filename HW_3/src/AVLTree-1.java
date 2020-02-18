@@ -8,6 +8,7 @@
 // boolean contains( x )  --> Return true if x is present
 // boolean remove( x )    --> Return true if x was present
 // Comparable findMin( )  --> Return smallest item
+// Void deleteMin()       --> Delete the smallest node in tree
 // Comparable findMax( )  --> Return largest item
 // boolean isEmpty( )     --> Return true if empty; else false
 // void makeEmpty( )      --> Remove all items
@@ -227,9 +228,6 @@ public class AVLTree<AnyType extends Comparable<? super AnyType>>
 
     private AvlNode<AnyType> deleteMin( AvlNode<AnyType> t )
     {
-        if (root.left == findMin()) {
-            
-        }
         return t;
     }
 
