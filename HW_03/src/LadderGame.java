@@ -81,7 +81,7 @@ public class LadderGame {
 //                    System.out.println(word);
 
                     // calculates the priority of the word that is one off
-                    int pri = start.moves + numberOffBy((String) word, b);
+                    int pri = start.moves * 2 + (int)Math.pow(numberOffBy((String) word, b), 2);
 
                     // if the word is the final word then end
                     if (b.equals(word)) {
