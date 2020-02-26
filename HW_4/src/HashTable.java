@@ -39,27 +39,23 @@ public class HashTable<E>
      * Insert into the hash table. If the item is
      * already present, do nothing.
      * Implementation issue: This routine doesn't allow you to use a lazily deleted location.  Do you see why?
-     * @param x the item to insert.
+     * @param key the item to insert.
      */
-    public boolean insert(int hashVal, E x )
+    public boolean insert( String key, E val )
     {
         // Insert x as active
-        int currentPos = findPos(hashVal, x );
+        int currentPos = findPos( key );
         if( isActive( currentPos ) )
             return false;
 
-        array[ currentPos ] = new HashEntry<>( x, true );
+        array[ currentPos ] = new HashEntry<>( val, true );
         currentActiveEntries++;
 
         // Rehash; see Section 5.5
-        if( ++occupiedCt > array.length / 2 )
-            rehash( );
+//        if( ++occupiedCt > array.length / 2 )
+//            rehash( );
 
         return true;
-    }
-
-    public int hashVal( Integer x){
-        return myhash( (E)x );
     }
 
     public String toString (int limit){
@@ -77,42 +73,42 @@ public class HashTable<E>
     /**
      * Expand the hash table.
      */
-    private void rehash( )
-    {
-        HashEntry<E> [ ] oldArray = array;
-
-        // Create a new double-sized, empty table
-        allocateArray( 2 * oldArray.length );
-        occupiedCt = 0;
-        currentActiveEntries = 0;
-
-        // Copy table over
-        for( HashEntry<E> entry : oldArray )
-            if( entry != null && entry.isActive )
-                insert(myhash(entry.element), entry.element );
-    }
+//    private void rehash( )
+//    {
+//        HashEntry<E> [ ] oldArray = array;
+//
+//        // Create a new double-sized, empty table
+//        allocateArray( 2 * oldArray.length );
+//        occupiedCt = 0;
+//        currentActiveEntries = 0;
+//
+//        // Copy table over
+//        for( HashEntry<E> entry : oldArray )
+//            if( entry != null && entry.isActive )
+//                insert(entry.element, entry.element );
+//    }
 
     /**
      * Method that performs quadratic probing resolution.
-     * @param x the item to search for.
+     * @param key the item to search for.
      * @return the position where the search terminates.
      * Never returns an inactive location.
      */
-    private int findPos(int hashVal, E x )
+    private int findPos( String key )
     {
         int offset = 1;
-        int currentPos = hashVal;
+        int val = myhash( key );
 
-        while( array[ currentPos ] != null &&
-                !array[ currentPos ].element.equals( x ) )
+        while( array[ val ] != null &&
+                !array[ val ].element.toString().contains( key ) )
         {
-            currentPos += offset;  // Compute ith probe
+            val += offset;  // Compute ith probe
             offset += 2;
-            if( currentPos >= array.length )
-                currentPos -= array.length;
+            if( val >= array.length )
+                val -= array.length;
         }
 
-        return currentPos;
+        return val;
     }
 
     /**
@@ -120,9 +116,9 @@ public class HashTable<E>
      * @param x the item to remove.
      * @return true if item removed
      */
-    public boolean remove(int hashVal, E x )
+    public boolean remove( String x )
     {
-        int currentPos = findPos(hashVal, x );
+        int currentPos = findPos( x );
         if( isActive( currentPos ) )
         {
             array[ currentPos ].isActive = false;
@@ -156,20 +152,20 @@ public class HashTable<E>
      * @param x the item to search for.
      * @return true if item is found
      */
-    public boolean contains( E x )
+    public boolean contains( String x )
     {
-        int currentPos = findPos(myhash(x), x );
+        int currentPos = findPos( x );
         return isActive( currentPos );
     }
 
     /**
      * Find an item in the hash table.
-     * @param x the item to search for.
+     * @param key the item to search for.
      * @return the matching item.
      */
-    public E find( E x )
+    public E find( String key )
     {
-        int currentPos = findPos(myhash(x), x );
+        int currentPos = findPos( key );
         if (!isActive( currentPos )) {
             return null;
         }
@@ -203,7 +199,7 @@ public class HashTable<E>
             array[ i ] = null;
     }
 
-    private int myhash( E x )
+    private int myhash( String x )
     {
         int hashVal = x.hashCode( );
 
@@ -300,16 +296,16 @@ public class HashTable<E>
 
 
         for( int i = GAP; i != 0; i = ( i + GAP ) % NUMS )
-            H.insert(H.hashVal(i), ""+i );
+            H.insert(""+i, "hi" );
         // Because GAP and NUMS are mutally prime, this inserts all numbers between 0 and 1999
         System.out.println( "H size is: " + H.size( ) );
-        for( int i = GAP; i != 0; i = ( i + GAP ) % NUMS )
-            if( H.insert(H.hashVal(i), ""+i ) )
-                System.out.println( "ERROR Find fails " + i );
+//        for( int i = GAP; i != 0; i = ( i + GAP ) % NUMS )
+//            if( H.insert( ""+i , "hi") )
+//                System.out.println( "ERROR Find fails " + i );
 
         for( int i = 1; i < NUMS; i+=2 )
         {
-            if( !H.contains( ""+i ) )
+            if( H.contains( ""+i ) )
                 System.out.println( "ERROR OOPS!!! " +  i  );
         }
 
