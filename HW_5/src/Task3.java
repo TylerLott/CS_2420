@@ -9,5 +9,4 @@ public class Task3 extends Task {
         //System.out.println("Using Task1 compareTo");
         return (start - deadline)-(t2.start - t2.deadline);
     }
-
 }
